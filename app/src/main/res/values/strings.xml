@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FaceRec</string>
+    <string name="cameraButton">Camera</string>
+</resources>
