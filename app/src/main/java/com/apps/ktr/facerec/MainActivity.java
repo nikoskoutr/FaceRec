@@ -2,11 +2,10 @@ package com.apps.ktr.facerec;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,9 +24,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = "FACEREC";
+    private String mCurrentPhotoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "test: " + Environment.DIRECTORY_PICTURES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -59,26 +60,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         galleryAddPic();
-        try {
-            Bitmap imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
-            ImageView mImageView = new ImageView(this);
-            RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            p.addRule(RelativeLayout.BELOW, R.id.cameraButton);
-            p.addRule(RelativeLayout.CENTER_HORIZONTAL);
-            mImageView.setLayoutParams(p);
-            mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            mImageView.setAdjustViewBounds(true);
-            mImageView.setImageBitmap(imageBitmap);
-            RelativeLayout rl = (RelativeLayout) findViewById(R.id.mainRl);
-            if (rl != null) {
-                rl.addView(mImageView);
+        Button findFacesButton = new Button(this);
+        findFacesButton.setText("Find Faces");
+        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        p.addRule(RelativeLayout.BELOW, R.id.cameraButton);
+        findFacesButton.setLayoutParams(p);
+        findFacesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View btn) {
+                findFaces(btn);
             }
-        } catch (IOException ex) {
-            Log.e(TAG, "Error getting image file:", ex);
-        }
-    }
+        });
+        RelativeLayout rl = (RelativeLayout) findViewById(R.id.mainRl);
+        rl.addView(findFacesButton);
 
-    String mCurrentPhotoPath;
+    }
 
     private File createImageFIle() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -91,15 +87,27 @@ public class MainActivity extends AppCompatActivity {
                 storageDir
         );
 
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
+        File f = new File(mCurrentPhotoPath.toString());
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+    }
+
+    private void findFaces(View btn) {
+        btn.setEnabled(false);
+        Bitmap faceImg = DetectFaceHelper.findFace(mCurrentPhotoPath);
+        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        p.addRule(RelativeLayout.BELOW, btn.getId());
+        ImageView imgV = new ImageView(this);
+        imgV.setLayoutParams(p);
+        imgV.setImageBitmap(faceImg);
+        RelativeLayout rL = (RelativeLayout) findViewById(R.id.mainRl);
+        rL.addView(imgV);
     }
 }
