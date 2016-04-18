@@ -3,4 +3,6 @@
     <string name="cameraButton">Camera</string>
     <string name="findFacesButton">Find Face</string>
     <string name="confirmFaceButton">OK</string>
+    <string name="hintUserIdentification">Enter user identification...</string>
+    <string name="confirmFaceLabel">Confirm Face</string>
 </resources>
