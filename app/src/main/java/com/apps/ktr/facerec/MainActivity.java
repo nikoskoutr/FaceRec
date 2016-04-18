@@ -1,8 +1,6 @@
 package com.apps.ktr.facerec;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,6 +20,7 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    public final static String EXTRA_MESSAGE = "com.apps.ktr.facerec.MESSAGE";
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = "FACEREC";
     private String mCurrentPhotoPath;
@@ -60,20 +59,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         galleryAddPic();
-        Button findFacesButton = new Button(this);
-        findFacesButton.setText("Find Faces");
-        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p.addRule(RelativeLayout.BELOW, R.id.cameraButton);
-        findFacesButton.setLayoutParams(p);
-        findFacesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View btn) {
-                findFaces(btn);
-            }
-        });
-        RelativeLayout rl = (RelativeLayout) findViewById(R.id.mainRl);
-        rl.addView(findFacesButton);
-
+        Intent confirmFaceIntent = new Intent(this, ConfirmFaceActivity.class);
+        confirmFaceIntent.putExtra(EXTRA_MESSAGE, mCurrentPhotoPath);
+        startActivity(confirmFaceIntent);
     }
 
     private File createImageFIle() throws IOException {
@@ -93,21 +81,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath.toString());
+        File f = null;
+        while (f ==null) {
+            f = new File(mCurrentPhotoPath);
+            try {
+                Thread.sleep(1000, 0);
+            } catch (InterruptedException e) {
+                Log.e(TAG, "Sleep interrupted at media scanner sleep" + e.toString());
+            }
+        }
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
     }
 
-    private void findFaces(View btn) {
-        btn.setEnabled(false);
-        Bitmap faceImg = DetectFaceHelper.findFace(mCurrentPhotoPath);
-        RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        p.addRule(RelativeLayout.BELOW, btn.getId());
-        ImageView imgV = new ImageView(this);
-        imgV.setLayoutParams(p);
-        imgV.setImageBitmap(faceImg);
-        RelativeLayout rL = (RelativeLayout) findViewById(R.id.mainRl);
-        rL.addView(imgV);
-    }
 }
