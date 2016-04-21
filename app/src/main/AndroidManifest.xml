@@ -36,8 +36,8 @@
         <activity
             android:name=".CameraActivity"
             android:label="@string/cameraActivity"
-            android:screenOrientation="landscape"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="landscape">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

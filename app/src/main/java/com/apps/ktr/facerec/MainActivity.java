@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = null;
-        while (f ==null) {
+        while (f == null) {
             f = new File(mCurrentPhotoPath);
             try {
                 Thread.sleep(1000, 0);

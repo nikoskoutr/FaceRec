@@ -13,15 +13,15 @@
         android:id="@+id/faceFoundView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/confirmFaceButton"
-        android:text="@string/confirmFaceButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/faceFoundView"
         android:layout_below="@id/faceFoundView"
-        android:layout_alignEnd="@id/faceFoundView"/>
+        android:text="@string/confirmFaceButton" />
 
     <EditText
         android:id="@+id/userIdInput"
@@ -29,5 +29,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/faceFoundView"
         android:layout_toStartOf="@id/confirmFaceButton"
-        android:hint="@string/hintUserIdentification"/>
+        android:hint="@string/hintUserIdentification" />
+
+    <Button
+        android:id="@+id/releasePrefs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/faceFoundView"
+        android:layout_below="@id/confirmFaceButton"
+        android:text="Release Prefs" />
 </RelativeLayout>
