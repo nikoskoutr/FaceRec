@@ -9,4 +9,6 @@
     <string name="cameraActivity">Camera</string>
     <string name="identifyButton">Identify</string>
     <string name="preference_file_key">com.apps.ktr.facerec.USER_IDS</string>
+    <string name="eigenFaceSearch">Search With Eigenface</string>
+    <string name="fisherFaceSearch">Search With Fisherface</string>
 </resources>

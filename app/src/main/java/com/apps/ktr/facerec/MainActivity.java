@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,16 +13,15 @@ import android.widget.Button;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
-
     public final static String EXTRA_MESSAGE = "com.apps.ktr.facerec.MESSAGE";
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = "FACEREC";
     private String mCurrentPhotoPath;
     private static Context mContext;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "test: " + Environment.DIRECTORY_PICTURES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
@@ -35,6 +33,17 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Intent takePictureIntent = new Intent(mContext, CameraActivity.class);
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            });
+        }
+
+        btn = (Button) findViewById(R.id.identifyButton);
+        if(btn != null) {
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent recognizeFaceIntent = new Intent(mContext, IdentifyFaceActivity.class);
+                    startActivity(recognizeFaceIntent);
                 }
             });
         }
