@@ -77,7 +77,6 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
     }
 
     private void saveFace() {
-        Log.e(TAG, Environment.getExternalStorageDirectory() + "/" + ROOT);
         File rootFolder = new File(Environment.getExternalStorageDirectory() + "/" + ROOT);
         if (!(rootFolder.exists())) {
             rootFolder.mkdir();

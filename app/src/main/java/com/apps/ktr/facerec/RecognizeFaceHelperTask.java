@@ -1,12 +1,10 @@
 package com.apps.ktr.facerec;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-import android.widget.ImageView;
 
 import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacpp.opencv_core.Mat;
@@ -24,9 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.nio.IntBuffer;
-import java.util.Vector;
 
 
 /**
@@ -35,7 +31,7 @@ import java.util.Vector;
  * File name: ${FILE_NAME}.
  * Developed with: Android Studio.
  */
-public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Bitmap> {
+public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
     private static final String TAG = "FACEREC";
     private static final String ROOT = "FaceRec";
 
@@ -43,19 +39,22 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Bitmap> {
     public final static int FISHERFACES = 2;
 
     private String mCurrentPhotoPath;
+    private Bitmap mFaceImg = null;
     private int mAlgorithm;
-    private Context mContext;
-    private WeakReference<ImageView> wR;
 
-    public RecognizeFaceHelperTask(String photoPath, int algorithmNumber, Context c, ImageView iV){
+    public AsyncResponseRec delegate = null;
+    public interface AsyncResponseRec {
+        void processFinishRec(String output);
+    }
+
+    public RecognizeFaceHelperTask(String photoPath, int algorithmNumber, AsyncResponseRec del){
         mCurrentPhotoPath = photoPath;
         mAlgorithm = algorithmNumber;
-        mContext = c;
-        wR = new WeakReference<>(iV);
+        delegate = del;
     }
 
     @Override
-    protected Bitmap doInBackground(String... strings) {
+    protected Integer doInBackground(String... strings) {
 //        switch (mAlgorithm) {
 //            case EIGENFACES: break;
 //            case FISHERFACES: break;
@@ -72,31 +71,25 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Bitmap> {
                 Log.e(TAG, "Interrupted exception while sleeping detect face thread" + e.toString());
             }
         }
-//        Bitmap bmp32 = input.copy(Bitmap.Config.ARGB_8888, true);
-//        Mat mat = new Mat();
-//        mat = norm(bmp32);
-//        Log.e(TAG, mat.channels() + "");
-//        bmp32 = matToBitmap(mat);
-
         String csvLocation = Environment.getExternalStorageDirectory() + "/" + ROOT + "/images.csv";
         int lines = countLines(csvLocation);
         opencv_core.MatVector images = new opencv_core.MatVector(lines);
         Mat labels = new Mat(lines, 1, opencv_core.CV_32SC1);
 
         readCsv(csvLocation, images, labels);
-        int height = images.get(0).rows();
-//
-        FaceRecognizer model = opencv_face.createEigenFaceRecognizer();
-        model.
-        model.train(images, new Mat(1, labels.length, labels));
+
+        FaceRecognizer model = opencv_face.createFisherFaceRecognizer();
+        model.train(images, labels);
+
+        Mat test = bitmapToMat(mFaceImg);
+        int predictLabel = model.predict(test);
+        return predictLabel;
     }
 
     @Override
-    protected void onPostExecute(Bitmap b) {
-        super.onPostExecute(b);
-        final ImageView iV = wR.get();
-        iV.setImageBitmap(b);
-
+    protected void onPostExecute(Integer i) {
+        super.onPostExecute(i);
+        delegate.processFinishRec(i.toString());
     }
 
     private Mat norm (Bitmap b) {
@@ -193,6 +186,4 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Bitmap> {
         }
         return 0;
     }
-
-
 }
