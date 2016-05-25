@@ -11,6 +11,7 @@ import org.bytedeco.javacpp.opencv_core.Mat;
 import org.bytedeco.javacpp.opencv_face;
 import org.bytedeco.javacpp.opencv_face.FaceRecognizer;
 import org.bytedeco.javacpp.opencv_imgcodecs;
+
 import org.bytedeco.javacv.AndroidFrameConverter;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameConverter;
@@ -74,14 +75,15 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
         String csvLocation = Environment.getExternalStorageDirectory() + "/" + ROOT + "/images.csv";
         int lines = countLines(csvLocation);
         opencv_core.MatVector images = new opencv_core.MatVector(lines);
-        Mat labels = new Mat(lines, 1, opencv_core.CV_32SC1);
+        opencv_core.Mat asd = new Mat();
+        opencv_core.Mat labels = new Mat(lines, 1);
 
         readCsv(csvLocation, images, labels);
 
         FaceRecognizer model = opencv_face.createFisherFaceRecognizer();
         model.train(images, labels);
 
-        Mat test = bitmapToMat(mFaceImg);
+        opencv_core.Mat test = bitmapToMat(mFaceImg);
         int predictLabel = model.predict(test);
         return predictLabel;
     }
@@ -92,8 +94,8 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
         delegate.processFinishRec(i.toString());
     }
 
-    private Mat norm (Bitmap b) {
-        Mat ret = bitmapToMat(b);
+    private opencv_core.Mat norm (Bitmap b) {
+        opencv_core.Mat ret = bitmapToMat(b);
         Mat returningMat = new Mat();
 
         switch (ret.channels()) {
@@ -136,8 +138,8 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
             while (line != null) {
                 int index = line.indexOf(";");
                 if (index != -1) {
-                    Mat image = opencv_imgcodecs.imread(line.substring(0, index));
-                    Integer label = Integer.parseInt(line.substring(index + 1));
+                    Mat image = opencv_imgcodecs.imread(line.substring(0, index), opencv_imgcodecs.CV_LOAD_IMAGE_GRAYSCALE);
+                    int label = Integer.parseInt(line.substring(index + 1));
                     images.put(counter, image);
                     labelsBuf.put(counter, label);
                     counter++;
@@ -165,7 +167,7 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
         return bmp;
     }
 
-    public int countLines(String filename) {
+    private int countLines(String filename) {
         try {
             InputStream is = new BufferedInputStream(new FileInputStream(filename));
             byte[] c = new byte[1024];

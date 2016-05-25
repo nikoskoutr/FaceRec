@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -91,6 +92,8 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
             userFolder.mkdir();
         }
 
+        normalizeImageSize(userId);
+
         FileOutputStream out = null;
         try {
             File img = new File(mCurrentPhotoPath);
@@ -138,6 +141,19 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
             } catch (IOException e) {
                 Log.e(TAG, "Error creating csv." + e.getMessage());
             }
+        }
+    }
+
+    private void normalizeImageSize(String userId) {
+        File dir = new File(Environment.getExternalStorageDirectory() + "/" + ROOT + "/" + userId);
+        File[] contents = dir.listFiles();
+        if(!(contents.length == 0)) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(contents[0].getAbsolutePath(), options);
+            int width = options.outWidth;
+            int height = options.outHeight;
+            faceImg = Bitmap.createScaledBitmap(faceImg, width, height, false);
         }
     }
 }
