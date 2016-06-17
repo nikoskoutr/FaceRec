@@ -27,4 +27,22 @@
         android:layout_marginStart="30dp"
         android:text="@string/identifyButton" />
 
+    <Button
+        android:id="@+id/createCsvButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/identifyButton"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:text="@string/createCsvButton" />
+
+    <Button
+        android:id="@+id/trainButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createCsvButton"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:text="@string/trainButton" />
+
 </RelativeLayout>

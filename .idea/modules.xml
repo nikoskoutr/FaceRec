@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FaceRec.iml" filepath="$PROJECT_DIR$/FaceRec.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/openCVLibrary310dev/openCVLibrary310dev.iml" filepath="$PROJECT_DIR$/openCVLibrary310dev/openCVLibrary310dev.iml" />
     </modules>
   </component>
 </project>

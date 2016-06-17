@@ -42,7 +42,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".IdentifyFaceActivity"></activity>
+        <activity android:name=".IdentifyFaceActivity" />
+        <activity android:name=".TrainAlgorithmsActivity"></activity>
     </application>
 
 </manifest>

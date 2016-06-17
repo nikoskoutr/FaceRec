@@ -1,44 +1,47 @@
 apply plugin: 'com.android.application'
-
 android {
-    compileSdkVersion 23
-    buildToolsVersion "24-rc4"
+        compileSdkVersion 23
+        buildToolsVersion "24-rc4"
 
-    defaultConfig {
-        applicationId "com.apps.ktr.facerec"
-        minSdkVersion 19
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        defaultConfig {
+            applicationId "com.apps.ktr.facerec"
+            minSdkVersion 19
+            targetSdkVersion 23
+            versionCode 1
+            versionName "1.0"
         }
-    }
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
+        }
 
-    packagingOptions {
-        exclude 'META-INF/services/javax.annotation.processing.Processor'
-        pickFirst  'META-INF/maven/org.bytedeco.javacpp-presets/opencv/pom.properties'
-        pickFirst  'META-INF/maven/org.bytedeco.javacpp-presets/opencv/pom.xml'
-        pickFirst  'META-INF/maven/org.bytedeco.javacpp-presets/ffmpeg/pom.properties'
-        pickFirst  'META-INF/maven/org.bytedeco.javacpp-presets/ffmpeg/pom.xml'
+        sourceSets {
+            main {
+                jni {
+                    srcDirs = []
+                }
+            }
+        }
+
+    task ndkBuild(type: Exec, description: 'Compile JNI source via NDK') {
+        commandLine '/opt/android-sdk/ndk-bundle/ndk-build',
+                'NDK_PROJECT_PATH=build/intermediates/ndk',
+                'NDK_LIBS_OUT=src/main/test',
+                'APP_BUILD_SCRIPT=src/main/jni/Android.mk',
+                'NDK_APPLICATION_MK=src/main/jni/Application.mk'
+    }
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
     }
 }
 
+
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.11'
     compile 'com.android.support:appcompat-v7:23.4.0'
     //compile project(':openCVLibrary310')
-    //compile 'org.bytedeco:javacv:1.1'
-    //compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.0.0-1.1', classifier: 'android-arm'
-    //compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '2.8.1-1.1', classifier: 'android-arm'
-    //    compile files('libs/javacpp.jar')
-    //    compile files('libs/javacv.jar')
-    //    compile files('libs/opencv-android-arm.jar')
-    //    compile files('libs/opencv.jar')
-    compile files('libs/javacpp.jar')
-    compile files('libs/javacv.jar')
-    compile files('libs/opencv.jar')
+    //compile group: 'org.bytedeco', name: 'javacv', version: '1.1'
+    compile project(':openCVLibrary310dev')
 }

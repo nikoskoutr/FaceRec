@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">FaceRec</string>
     <string name="cameraButton">Camera</string>
-    <string name="findFacesButton">Find Face</string>
-    <string name="confirmFaceButton">OK</string>
-    <string name="hintUserIdentification">Enter user identification...</string>
+    <string name="enterUserInfoTextView">Enter your information:</string>
+    <string name="orEnterId">Or enter your ID:</string>
+    <string name="hintUserName">User Name…</string>
+    <string name="hintUserSurname">User Surname…</string>
+    <string name="hintUserId">User ID…</string>
     <string name="confirmFaceLabel">Confirm Face</string>
     <string name="button_capture">Capture</string>
     <string name="cameraActivity">Camera</string>
@@ -11,4 +13,23 @@
     <string name="preference_file_key">com.apps.ktr.facerec.USER_IDS</string>
     <string name="eigenFaceSearch">Search With Eigenface</string>
     <string name="fisherFaceSearch">Search With Fisherface</string>
+    <string name="LBPHFaceSearch">Search with LBPH</string>
+    <string name="dropDb">Drop DB</string>
+    <string name="createCsvButton">Reload Training File</string>
+    <string name="trainButton">Train Algorithms</string>
+    <string name="dialogUserId">Your ID is:</string>
+    <string name="dialogUserIdTitle">Information</string>
+    <string name="ok">OK</string>
+    <string name="eigenfacetime">Time it took for eigenfaces to train:</string>
+    <string name="fisherfacetime">Time it took for fisherfaces to train:</string>
+    <string name="lbphtime">Time it took for LBPH to train:</string>
+    <string name="noIdFoundTitle">Error</string>
+    <string name="noIdFound">Your ID was not found in the database, please check if it\'s correct.\nIf you don\'t have an ID please fill in your information and submit the form.</string>
+    <string name="faceNotFound">Face not found. Please try again.</string>
+    <string name="faceNotFoundTitle">Error</string>
+    <string name="saveTrainedFile">Save</string>
+    <string name="alertSaveFile">You are about to save a large file.\nThis will take some time and will reserve a large amount of storage.\nDo you want to continue?</string>
+    <string name="alertSaveFileTitle">Alert</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

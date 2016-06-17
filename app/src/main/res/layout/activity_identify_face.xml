@@ -32,6 +32,7 @@
             android:text="@string/eigenFaceSearch"/>
 
         <Button
+            android:id="@+id/fisherFaceSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/eigenFaceSearch"
@@ -39,6 +40,16 @@
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
             android:text="@string/fisherFaceSearch"/>
+
+        <Button
+            android:id="@+id/LBPHFaceSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/fisherFaceSearch"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:text="@string/LBPHFaceSearch"/>
 
     </RelativeLayout>
 

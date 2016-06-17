@@ -69,6 +69,8 @@ public class DetectFaceHelperTask extends AsyncTask<String, Void, Bitmap>{
             } catch (IOException e){
                 Log.e(TAG, "Error at bitmap region decoder");
             }
+        } else {
+            img = null;
         }
 
         return img;
@@ -76,8 +78,10 @@ public class DetectFaceHelperTask extends AsyncTask<String, Void, Bitmap>{
 
     @Override
     protected void onPostExecute(Bitmap res) {
-        final ImageView imageView = imageViewReference.get();
-        imageView.setImageBitmap(res);
+        if (res != null) {
+            final ImageView imageView = imageViewReference.get();
+            imageView.setImageBitmap(res);
+        }
         final ProgressDialog progressDialog = pd.get();
         progressDialog.dismiss();
         delegate.processFinish(res);
