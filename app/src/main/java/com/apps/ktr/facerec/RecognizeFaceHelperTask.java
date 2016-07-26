@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+
 
 /**
  * Created by nikos on 4/24/16.
@@ -17,6 +19,7 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
     private static final String TAG = "FACEREC";
     public AsyncResponseRec delegate = null;
     private int algorithm;
+    private boolean useTrainedData;
 
     static {
         System.loadLibrary("native");
@@ -26,9 +29,10 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
         void processFinishRec(String output);
     }
 
-    public RecognizeFaceHelperTask(int alg, AsyncResponseRec del){
+    public RecognizeFaceHelperTask(int alg, AsyncResponseRec del, boolean b){
         delegate = del;
         algorithm = alg;
+        useTrainedData = b;
     }
 
     @Override
@@ -42,7 +46,18 @@ public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
                 Log.e(TAG, "Interrupted exception while sleeping detect face thread" + e.toString());
             }
         }
-        String test = NativeClass.nativeFunction(algorithm);
+        String sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File appDir = new File(sdcard + "/FaceRec");
+        if (appDir.exists()) {
+            File[] contents = appDir.listFiles();
+            for (File f : contents) {
+                if(f.getName().startsWith("reconstruction") || f.getName().startsWith("eigenface")){
+                    f.delete();
+                }
+            }
+        }
+
+        String test = NativeClass.nativeFunction(algorithm, useTrainedData, sdcard);
         return  Integer.parseInt(test);
 //        switch (mAlgorithm) {
 //            case EIGENFACES: break;

@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class IdentifyFaceActivity extends AppCompatActivity implements DetectFaceHelperTask.AsyncResponse, RecognizeFaceHelperTask.AsyncResponseRec{
+    private boolean useTrainedData = false;
     private static final String TAG = "FACEREC";
     private static int CAMERA_REQUEST_CODE = 1;
     private String mCurrentPhotoPath;
@@ -43,6 +44,32 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
         startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
 
         createButtonListeners();
+        checkFiles();
+    }
+
+    private void checkFiles() {
+        File storage = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/FaceRec/");
+        File eigen = new File(storage + "/eigenfaces.yml");
+        Log.e(TAG, "-------------------" + eigen.getAbsolutePath());
+        File fisher = new File(storage + "/fisherfaces.yml");
+        File lbph = new File(storage + "/LBPH.yml");
+        if(eigen.exists() && fisher.exists() && lbph.exists()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            String message = getResources().getString(R.string.traineFileFound);
+            builder.setMessage(message).setTitle(R.string.traineFileFoundTitle);
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    useTrainedData = true;
+                }
+            });
+            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
     @Override
@@ -72,7 +99,7 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
                 public void onClick(View view) {
                     //Search with eigenfaces
                     algorithm = 1;
-                    new RecognizeFaceHelperTask(algorithm, mAsyncResponseRec).execute();
+                    new RecognizeFaceHelperTask(algorithm, mAsyncResponseRec, useTrainedData).execute();
                 }
             });
         }
@@ -84,7 +111,7 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
                 public void onClick(View view) {
                     //Search with fisherfaces
                     algorithm = 2;
-                    new RecognizeFaceHelperTask(algorithm, mAsyncResponseRec).execute();
+                    new RecognizeFaceHelperTask(algorithm, mAsyncResponseRec, useTrainedData).execute();
                 }
             });
         }
@@ -96,7 +123,7 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
                 public void onClick(View view) {
                     //Search with LBPH
                     algorithm = 3;
-                    new RecognizeFaceHelperTask(algorithm, mAsyncResponseRec).execute();
+                    new RecognizeFaceHelperTask(algorithm, mAsyncResponseRec, useTrainedData).execute();
                 }
             });
         }
@@ -121,39 +148,17 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
                     finish();
                 }
             });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
     }
 
     //Implements face recognition function, in order to get label back from the task
     @Override
     public void processFinishRec(String output) {
-        mLabelPredicted = output;
-        FaceRecDbHelper mDbHelper = new FaceRecDbHelper(getApplicationContext());
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String[] projection = {FaceRecContract.UserEntry.COLUMN_NAME_USERNAME, FaceRecContract.UserEntry.COLUMN_NAME_USERSURNAME};
-        String selection = FaceRecContract.UserEntry.COLUMN_NAME_USERID + " = ?";
-        String[] selectionArgs = {mLabelPredicted};
-        Cursor c = db.query(
-                FaceRecContract.UserEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null);
-        c.moveToFirst();
-        String message = c.getString(c.getColumnIndex(FaceRecContract.UserEntry.COLUMN_NAME_USERNAME));
-        message += " " + c.getString(c.getColumnIndex(FaceRecContract.UserEntry.COLUMN_NAME_USERSURNAME));
-        c.close();
-        db.close();
-        Context context = getApplicationContext();
-        CharSequence text = message;
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
+        Intent recognitionResultIntent = new Intent(getApplicationContext(), RecognitionResultActivity.class);
+        recognitionResultIntent.putExtra("UserId", output);
+        startActivity(recognitionResultIntent);
     }
 
     private void saveBitmap() {
@@ -191,17 +196,17 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
     private void normalizeImageSize() {
         File dir = new File(Environment.getExternalStorageDirectory() + "/" + ROOT + "/");
         File[] contents = dir.listFiles();
-        if(!(contents.length == 0)) {
-            File[] images = contents[0].listFiles();
-            if(!(images == null)) {
-                if(!(images.length == 0)) {
-                    File template = images[0];
+        if(contents.length > 0) {
+            for(File f : contents) {
+                if(f.isDirectory() && f.list().length>0) {
+                    File template = f.listFiles()[0];
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
                     BitmapFactory.decodeFile(template.getAbsolutePath(), options);
                     int width = options.outWidth;
                     int height = options.outHeight;
                     mFaceBitmap = Bitmap.createScaledBitmap(mFaceBitmap, width, height, false);
+                    break;
                 }
             }
         }

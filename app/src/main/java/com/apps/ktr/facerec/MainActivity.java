@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -87,13 +88,38 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        btn = (Button) findViewById(R.id.trainButton);
-        if(btn != null) {
+//        btn = (Button) findViewById(R.id.trainButton);
+//        if(btn != null) {
+//            btn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent trainAlgorithmsIntent = new Intent(mContext, TrainAlgorithmsActivity.class);
+//                    startActivity(trainAlgorithmsIntent);
+//                }
+//            });
+//        }
+
+        btn = (Button) findViewById(R.id.dropDbButton);
+        if (btn != null) {
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent trainAlgorithmsIntent = new Intent(mContext, TrainAlgorithmsActivity.class);
-                    startActivity(trainAlgorithmsIntent);
+                    Log.e(TAG,"Droped db");
+                    FaceRecDbHelper mDbHelper = new FaceRecDbHelper(getApplicationContext());
+                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                    mDbHelper.onUpgrade(db,0,0);
+                    db.close();
+                }
+            });
+        }
+
+        btn = (Button) findViewById(R.id.statisticsButton);
+        if (btn != null) {
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent statisticsIntent = new Intent(mContext, StatisticsActivity.class);
+                    startActivity(statisticsIntent);
                 }
             });
         }

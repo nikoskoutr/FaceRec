@@ -1,12 +1,10 @@
 package com.apps.ktr.facerec;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -16,6 +14,7 @@ import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -33,11 +32,36 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
 
     private static final String TAG = "FACEREC";
     private static final String ROOT = "FaceRec";
+    private Context mContext;
     private Bitmap faceImg = null;
     private String mCurrentPhotoPath;
     private String mUserId;
     private boolean mIdSetFlag = false;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        setContentView(R.layout.activity_confirm_face);
+        ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Searching for face...");
+        progress.show();
+
+        ImageView imgV = (ImageView) findViewById(R.id.faceFoundView);
+        if (imgV == null) {
+            Log.e(TAG, "View not found.");
+        }
+        Intent intent = getIntent();
+        mCurrentPhotoPath = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        new DetectFaceHelperTask(imgV, progress, this).execute(mCurrentPhotoPath);
+
+        setButtonListeners();
+        setTextListeners();
+
+    }
+
+    // Gets the resulting face
     @Override
     public void processFinish(Bitmap output) {
         if (output != null){
@@ -58,87 +82,7 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
         Log.e(TAG, "Image return!");
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        final Context mContext = this;
-        setContentView(R.layout.activity_confirm_face);
-        ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle("Loading");
-        progress.setMessage("Searching for face...");
-        progress.show();
-
-        ImageView imgV = (ImageView) findViewById(R.id.faceFoundView);
-        if (imgV == null) {
-            Log.e(TAG, "View not found.");
-        }
-        Intent intent = getIntent();
-        mCurrentPhotoPath = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        new DetectFaceHelperTask(imgV, progress, this).execute(mCurrentPhotoPath);
-
-        Button btn = (Button) findViewById(R.id.confirmFaceButton);
-        if (btn != null) {
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        saveFace();
-                        if (mIdSetFlag) {
-                            finish();
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                            String message = getResources().getString(R.string.dialogUserId) + " " + mUserId;
-                            builder.setMessage(message).setTitle(R.string.dialogUserIdTitle);
-                            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    finish();
-                                }
-                            });
-                            AlertDialog dialog = builder.create();
-                            dialog.show();
-                        }
-                    } catch (Exception e) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                        String message = getResources().getString(R.string.noIdFound);
-                        builder.setMessage(message).setTitle(R.string.noIdFoundTitle);
-                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                finish();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-
-                }
-            });
-        }
-
-        btn = (Button) findViewById(R.id.cancelFaceButton);
-        if (btn != null) {
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    finish();
-                }
-            });
-        }
-
-        btn = (Button) findViewById(R.id.dropDbButton);
-        if (btn != null) {
-            btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FaceRecDbHelper mDbHelper = new FaceRecDbHelper(getApplicationContext());
-                    SQLiteDatabase db = mDbHelper.getWritableDatabase();
-                    db.execSQL(FaceRecContract.UserEntry.SQL_DELETE_ENTRIES);
-                    mDbHelper.onCreate(db);
-                    db.close();
-                }
-            });
-        }
-    }
-
+    // Finds and saves the face with all the needed supporting functions
     private void saveFace() throws Exception {
         // Get the root folder that the app will use
         File rootFolder = new File(Environment.getExternalStorageDirectory() + "/" + ROOT);
@@ -181,7 +125,7 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
                     values,
                     SQLiteDatabase.CONFLICT_IGNORE); // On conflict the id of the existing row will be returned.
             if (userId == -1) {
-                String[] projection = {FaceRecContract.UserEntry.COLUMN_NAME_USERID};
+                String[] projection = {FaceRecContract.UserEntry._ID};
                 String selection = FaceRecContract.UserEntry.COLUMN_NAME_USERNAME + " = ?" + " AND " +
                         FaceRecContract.UserEntry.COLUMN_NAME_USERSURNAME + "= ?";
                 String[] selectionArgs = {userName, userSurname};
@@ -194,11 +138,10 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
                         null,
                         null);
                 c.moveToFirst();
-                userId = c.getLong(c.getColumnIndex(FaceRecContract.UserEntry.COLUMN_NAME_USERID));
+                userId = c.getLong(c.getColumnIndex(FaceRecContract.UserEntry._ID));
                 c.close();
             }
 
-            // Close the database.
             db.close();
             mUserId = Long.toString(userId, 10);
         } else {
@@ -208,7 +151,7 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
                 FaceRecDbHelper mDbHelper = new FaceRecDbHelper(getApplicationContext());
                 SQLiteDatabase db = mDbHelper.getReadableDatabase();
                 String[] projection = {FaceRecContract.UserEntry.COLUMN_NAME_USERNAME, FaceRecContract.UserEntry.COLUMN_NAME_USERSURNAME};
-                String selection = FaceRecContract.UserEntry.COLUMN_NAME_USERID + " = ?";
+                String selection = FaceRecContract.UserEntry._ID + " = ?";
                 String[] selectionArgs = {mUserId};
                 Cursor c = db.query(
                         FaceRecContract.UserEntry.TABLE_NAME,
@@ -235,7 +178,7 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
         }
 
         // All images should have the same pixel dimensions in order for the algorithms to work.
-        // The following method does that.
+        // The follGraphView) layout.findViewById(graphResId);owing method does that.
         normalizeImageSize();
 
         // Initialize the string that will contain the image location.
@@ -287,24 +230,114 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
     private void normalizeImageSize() {
         File dir = new File(Environment.getExternalStorageDirectory() + "/" + ROOT + "/");
         File[] contents = dir.listFiles();
-        if(!(contents.length == 0)) {
-            File[] images = contents[0].listFiles();
-            if(!(images == null)) {
-                if(!(images.length == 0)) {
-                    File template = images[0];
+        if(contents.length > 0) {
+            for(File f : contents) {
+                if(f.isDirectory() && f.list().length>0) {
+                    File template = f.listFiles()[0];
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inJustDecodeBounds = true;
                     BitmapFactory.decodeFile(template.getAbsolutePath(), options);
                     int width = options.outWidth;
                     int height = options.outHeight;
                     faceImg = Bitmap.createScaledBitmap(faceImg, width, height, false);
+                    break;
                 }
             }
         }
     }
 
+    // Set button listeners
+    private void setButtonListeners() {
+        Button btn = (Button) findViewById(R.id.confirmFaceButton);
+
+        if (btn != null) {
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        saveFace();
+                        if (mIdSetFlag) {
+                            finish();
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            String message = getResources().getString(R.string.dialogUserId) + " " + mUserId;
+                            builder.setMessage(message).setTitle(R.string.dialogUserIdTitle);
+                            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+                        }
+                    } catch (Exception e) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        String message = getResources().getString(R.string.noIdFound);
+                        builder.setMessage(message).setTitle(R.string.noIdFoundTitle);
+                        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+
+                }
+            });
+        }
+
+        btn = (Button) findViewById(R.id.cancelFaceButton);
+        if (btn != null) {
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+        }
+    }
+
+    // Set text change listeners for disabling input that should not be used together
     private void setTextListeners() {
+        TextWatcher userInfoWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                EditText toChange = (EditText) findViewById(R.id.userIdInput);
+                EditText toChangeName = (EditText) findViewById(R.id.userNameInput);
+                EditText toChangeSurname = (EditText) findViewById(R.id.userSurnameInput);
+                if (toChange != null && toChangeName != null && toChangeSurname != null) {
+                    if (s.toString().length() > 0) {
+                        toChange.setInputType(InputType.TYPE_NULL);
+                        toChange.setCursorVisible(false);
+                        toChange.setEnabled(false);
+                    } else if (toChangeName.getText().toString().equals("") && toChangeSurname.getText().toString().equals("")){
+                        toChange.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        toChange.setEnabled(true);
+                        toChange.setCursorVisible(true);
+                    }
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
         EditText et = (EditText) findViewById(R.id.userNameInput);
+        if (et != null) {
+            et.addTextChangedListener(userInfoWatcher);
+        }
+        et = (EditText) findViewById(R.id.userSurnameInput);
+        if (et != null) {
+            et.addTextChangedListener(userInfoWatcher);
+        }
+        et = (EditText) findViewById(R.id.userIdInput);
         if (et != null) {
             et.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -314,14 +347,30 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                    EditText toChangeName = (EditText) findViewById(R.id.userNameInput);
+                    EditText toChangeSurname = (EditText) findViewById(R.id.userSurnameInput);
+                    if (toChangeName != null && toChangeSurname != null) {
+                        if (s.toString().length() > 0) {
+                            toChangeName.setInputType(InputType.TYPE_NULL);
+                            toChangeName.setEnabled(false);
+                            toChangeName.setCursorVisible(false);
+                            toChangeSurname.setInputType(InputType.TYPE_NULL);
+                            toChangeSurname.setEnabled(false);
+                            toChangeSurname.setCursorVisible(false);
+                        } else {
+                            toChangeName.setInputType(InputType.TYPE_CLASS_TEXT);
+                            toChangeName.setEnabled(true);
+                            toChangeName.setCursorVisible(true);
+                            toChangeSurname.setInputType(InputType.TYPE_CLASS_TEXT);
+                            toChangeSurname.setEnabled(true);
+                            toChangeSurname.setCursorVisible(true);
+                        }
+                    }
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    if (s.length() > 0) {
 
-                    }
                 }
             });
         }

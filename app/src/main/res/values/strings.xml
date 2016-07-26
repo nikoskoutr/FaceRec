@@ -32,4 +32,29 @@
     <string name="alertSaveFileTitle">Alert</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="traineFileFoundTitle">Information</string>
+    <string name="traineFileFound">Found trained data.\nTrained data will make the process faster only if there is a large collection of images, otherwise loading those large files will slow the whole process down.\nShould the app use the data?</string>
+    <string name="userName">Recognized Name:</string>
+    <string name="userSurname">Recognized Surname:</string>
+    <string name="recogntionConfirmation">Is the prediction acurate?</string>
+    <string name="notRecognized">Your face could not be recognized</string>
+    <string name="notRecognizedTitle">Error</string>
+    <string name="testFaceDescription">Face tested.</string>
+    <string name="reconstructedFaceDescription">Face reconstructed and used by the algorithm.</string>
+    <string name="testFaceNote">Original</string>
+    <string name="reconstructedFaceNote">Reconstructed</string>
+    <string name="componentsUsed">Number of Components Used:</string>
+    <string name="title_activity_select_user">SelectUserActivity</string>
+    <string name="selectUserTitle">Who are you?</string>
+    <string name="id">ID</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="statisticsButton">Statistics</string>
+    <string name="timePageTitle">Training Time - Number of Images</string>
+    <string name="successPercentagePageTitle">Success Rate - Percentage of User Images</string>
+    <string name="successNumberPageTitle">Success Rate - Number of User Images</string>
+    <string name="timePredictPageTitle">Predict Time Graph</string>
 </resources>

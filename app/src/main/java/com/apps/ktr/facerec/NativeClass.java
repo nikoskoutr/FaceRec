@@ -7,5 +7,5 @@ package com.apps.ktr.facerec;
  * Developed with: Android Studio.
  */
 public class NativeClass {
-    public static native String nativeFunction(int function);
+    public static native String nativeFunction(int function, boolean useTrainedData, String externalstorage);
 }

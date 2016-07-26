@@ -3,6 +3,7 @@ package com.apps.ktr.facerec;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -41,13 +42,13 @@ public class TrainAlgorithmsActivity extends AppCompatActivity {
         new Thread() {
             public void run() {
                 long start = System.nanoTime();
-                NativeClass.nativeFunction(TRAIN_EIGENFACES);
+                NativeClass.nativeFunction(TRAIN_EIGENFACES, false, Environment.getExternalStorageDirectory().getAbsolutePath());
                 eigenFacesTime =  TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
                 start = System.nanoTime();
-                NativeClass.nativeFunction(TRAIN_FISHERFACES);
+                NativeClass.nativeFunction(TRAIN_FISHERFACES, false, Environment.getExternalStorageDirectory().getAbsolutePath());
                 fisherFacesTime = TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
                 start = System.nanoTime();
-                NativeClass.nativeFunction(TRAIN_LBPH);
+                NativeClass.nativeFunction(TRAIN_LBPH, false, Environment.getExternalStorageDirectory().getAbsolutePath());
                 lbphTime = TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
                 handler.sendEmptyMessage(0);
             }
@@ -110,9 +111,9 @@ public class TrainAlgorithmsActivity extends AppCompatActivity {
 
         new Thread() {
             public void run() {
-                NativeClass.nativeFunction(SAVE_FISHERFACES);
-                NativeClass.nativeFunction(SAVE_EIGENFACES);
-                NativeClass.nativeFunction(SAVE_LBPH);
+                NativeClass.nativeFunction(SAVE_FISHERFACES, false, Environment.getExternalStorageDirectory().getAbsolutePath());
+                NativeClass.nativeFunction(SAVE_EIGENFACES, false, Environment.getExternalStorageDirectory().getAbsolutePath());
+                NativeClass.nativeFunction(SAVE_LBPH, false, Environment.getExternalStorageDirectory().getAbsolutePath());
                 handler.sendEmptyMessage(0);
             }
         }.start();

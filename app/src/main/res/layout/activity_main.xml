@@ -36,13 +36,32 @@
         android:layout_marginStart="30dp"
         android:text="@string/createCsvButton" />
 
-    <Button
+    <!--<Button
         android:id="@+id/trainButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/createCsvButton"
         android:layout_marginEnd="30dp"
         android:layout_marginStart="30dp"
-        android:text="@string/trainButton" />
+        android:text="@string/trainButton-->" />
+
+    <Button
+        android:id="@+id/dropDbButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/createCsvButton"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:text="@string/dropDb" />
+
+    <Button
+        android:id="@+id/statisticsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dropDbButton"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:text="@string/statisticsButton" />
+
 
 </RelativeLayout>

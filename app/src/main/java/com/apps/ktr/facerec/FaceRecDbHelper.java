@@ -20,10 +20,12 @@ public class FaceRecDbHelper extends SQLiteOpenHelper{
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(FaceRecContract.UserEntry.SQL_CREATE_ENTRIES);
+        db.execSQL(FaceRecContract.StatisticsEntry.SQL_CREATE_ENTRIES);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(FaceRecContract.UserEntry.SQL_DELETE_ENTRIES);
+        db.execSQL(FaceRecContract.StatisticsEntry.SQL_DELETE_ENTRIES);
         onCreate(db);
     }
 

@@ -200,7 +200,11 @@ class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         // Stop face detection.
-        mCamera.stopFaceDetection();
+        mCamera.setPreviewCallback(null);
+        mCamera.setFaceDetectionListener(null);
+        mCamera.setErrorCallback(null);
+        mCamera.release();
+        mCamera = null;
     }
 
     @Override

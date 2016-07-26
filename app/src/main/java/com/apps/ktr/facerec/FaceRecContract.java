@@ -18,13 +18,13 @@ public final class FaceRecContract {
 
     // Contract for the table containing user info.
     public static abstract class UserEntry implements BaseColumns {
+
         public static final String TABLE_NAME = "users";
-        public static final String COLUMN_NAME_USERID = "userid";
         public static final String COLUMN_NAME_USERNAME = "name";
         public static final String COLUMN_NAME_USERSURNAME = "surname";
         public static final String SQL_CREATE_ENTRIES =
                 "CREATE TABLE " + TABLE_NAME + " (" +
-                        COLUMN_NAME_USERID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+                        _ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
                         COLUMN_NAME_USERNAME + TEXT_TYPE + COMMA_SEP +
                         COLUMN_NAME_USERSURNAME + TEXT_TYPE + COMMA_SEP +
                         "UNIQUE(" + COLUMN_NAME_USERNAME + COMMA_SEP + COLUMN_NAME_USERSURNAME + ")" +
@@ -34,20 +34,33 @@ public final class FaceRecContract {
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
-    // Contract for the table containing the location of face images with their corresponding users.
-//    public static abstract class FaceImageEntry implements BaseColumns {
-//        public static final String TABLE_NAME = "faces";
-//        public static final String COLUMN_NAME_LOCATION = "location";
-//        public static final String COLUMN_NAME_USERID = "userid";
-//        public static final String SQL_CREATE_ENTRIES =
-//                "CREATE TABLE " + TABLE_NAME + " (" +
-//                        COLUMN_NAME_LOCATION + TEXT_TYPE + PRIMARY_KEY + COMMA_SEP +
-//                        COLUMN_NAME_USERID + INTEGER_TYPE + COMMA_SEP +
-//                        "FOREIGN KEY ( " + COLUMN_NAME_USERID + " ) references " +
-//                        UserEntry.TABLE_NAME + "(" + UserEntry.COLUMN_NAME_USERID + ")" +
-//                        " )";
-//
-//        public static final String SQL_DELETE_ENTRIES =
-//                "DROP TABLE IF EXISTS " + TABLE_NAME;
-//    }
+    //Contract for the table containing data about the prediction times and stressfulness of the algorithms.
+    public static abstract class StatisticsEntry implements BaseColumns {
+        public static final String TABLE_NAME = "statistics";
+        public static final String COLUMN_NAME_ALGORITHM = "algorithm";
+        public static final String COLUMN_NAME_TIMETRAIN = "ttime";
+        public static final String COLUMN_NAME_TIMEPREDICT = "ptime";
+        public static final String COLUMN_NAME_NUMBERIMAGESID = "nimagesid";
+        public static final String COLUMN_NAME_NUMBERIMAGESTOTAL = "nimagestotal";
+        public static final String COLUMN_NAME_SUCCESS = "success";
+        public static final String COLUMN_NAME_USERID = "userid";
+        public static final String COLUMN_NAME_USERID_PREDICTED = "useridp";
+        public static final String COLUMN_NAME_TOTAL_HITS = "totalhits";
+        public static final String SQL_CREATE_ENTRIES =
+                "CREATE TABLE " + TABLE_NAME + " (" +
+                        _ID + INTEGER_TYPE + PRIMARY_KEY + COMMA_SEP +
+                        COLUMN_NAME_ALGORITHM + TEXT_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TIMETRAIN + INTEGER_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TIMEPREDICT + INTEGER_TYPE + COMMA_SEP +
+                        COLUMN_NAME_NUMBERIMAGESID + INTEGER_TYPE + COMMA_SEP +
+                        COLUMN_NAME_NUMBERIMAGESTOTAL + INTEGER_TYPE + COMMA_SEP +
+                        COLUMN_NAME_SUCCESS + INTEGER_TYPE + COMMA_SEP +
+                        COLUMN_NAME_USERID + INTEGER_TYPE + COMMA_SEP +
+                        COLUMN_NAME_USERID_PREDICTED + INTEGER_TYPE + COMMA_SEP +
+                        COLUMN_NAME_TOTAL_HITS + INTEGER_TYPE +
+                        " )";
+
+        public static final String SQL_DELETE_ENTRIES =
+                "DROP TABLE IF EXISTS " + TABLE_NAME;
+    }
 }

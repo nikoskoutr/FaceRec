@@ -28,6 +28,7 @@
         <activity
             android:name=".ConfirmFaceActivity"
             android:label="@string/confirmFaceLabel"
+            android:orientation="horizontal"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -42,8 +43,33 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".IdentifyFaceActivity" />
-        <activity android:name=".TrainAlgorithmsActivity"></activity>
+        <activity
+            android:name=".IdentifyFaceActivity"
+            android:orientation="horizontal"
+            android:parentActivityName=".CameraActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CameraActivity" />
+        </activity>
+        <activity
+            android:name=".TrainAlgorithmsActivity"
+            android:orientation="horizontal"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".RecognitionResultActivity"
+            android:orientation="horizontal"
+            android:parentActivityName=".MainActivity">
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".SelectUserActivity" />
+        <activity android:name=".StatisticsActivity"></activity>
     </application>
 
 </manifest>
