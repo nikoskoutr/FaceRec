@@ -122,7 +122,7 @@ static jstring predictLBPH(string& path, jboolean& useData, vector<Mat>& images,
     } else {
         uint64 startTime = GetTimeMs64();
         model->train(images, labels);
-        elapsedTimePredict = GetTimeMs64() - startTime;
+        elapsedTimeTrain = GetTimeMs64() - startTime;
     }
     uint64 startTime = GetTimeMs64();
     int predictedLabel = model->predict(test);

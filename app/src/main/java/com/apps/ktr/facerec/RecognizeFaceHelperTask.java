@@ -17,9 +17,9 @@ import java.io.File;
  */
 public class RecognizeFaceHelperTask extends AsyncTask<String, Void, Integer> {
     private static final String TAG = "FACEREC";
-    public AsyncResponseRec delegate = null;
-    private int algorithm;
-    private boolean useTrainedData;
+    private AsyncResponseRec delegate = null;
+    private final int algorithm;
+    private final boolean useTrainedData;
 
     static {
         System.loadLibrary("native");

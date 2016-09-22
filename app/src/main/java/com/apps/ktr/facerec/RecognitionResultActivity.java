@@ -4,26 +4,21 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -32,16 +27,15 @@ public class RecognitionResultActivity extends AppCompatActivity {
     private String algorithm, name, surname, mLabelPredicted, actualUser;
     private long trainTime, predictTime;
     private int componentsUsed;
-    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recognition_result);
-        mContext = this;
+        Context mContext = this;
         Bundle extras = getIntent().getExtras();
         mLabelPredicted = extras.getString("UserId");
-        if (mLabelPredicted.equals("0") && mLabelPredicted != null) {
+        if (mLabelPredicted != null && mLabelPredicted.equals("0")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             String message = getResources().getString(R.string.notRecognized);
             builder.setMessage(message).setTitle(R.string.notRecognizedTitle);
@@ -132,6 +126,16 @@ public class RecognitionResultActivity extends AppCompatActivity {
         tV = (TextView) findViewById(R.id.componentsUsed);
         if (tV!=null) {
             tV.append(" " + String.valueOf(componentsUsed));
+        }
+
+        tV = (TextView) findViewById(R.id.trainTime);
+        if (tV!=null) {
+            tV.append(" " + String.valueOf(trainTime));
+        }
+
+        tV = (TextView) findViewById(R.id.predictTime);
+        if (tV!=null) {
+            tV.append(" " + String.valueOf(predictTime));
         }
     }
 

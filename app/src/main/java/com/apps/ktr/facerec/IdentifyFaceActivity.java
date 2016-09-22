@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -17,7 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,13 +23,10 @@ import java.io.IOException;
 public class IdentifyFaceActivity extends AppCompatActivity implements DetectFaceHelperTask.AsyncResponse, RecognizeFaceHelperTask.AsyncResponseRec{
     private boolean useTrainedData = false;
     private static final String TAG = "FACEREC";
-    private static int CAMERA_REQUEST_CODE = 1;
-    private String mCurrentPhotoPath;
     private Bitmap mFaceBitmap;
-    private String mLabelPredicted;
-    int algorithm = 0;
-    private Context mContext = this;
-    private RecognizeFaceHelperTask.AsyncResponseRec mAsyncResponseRec = this;
+    private int algorithm = 0;
+    private final Context mContext = this;
+    private final RecognizeFaceHelperTask.AsyncResponseRec mAsyncResponseRec = this;
     private static final String ROOT = "FaceRec";
 
     @Override
@@ -41,6 +36,7 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
 
         //Get picture that will be tested against the database.
         Intent cameraIntent = new Intent(this, CameraActivity.class);
+        int CAMERA_REQUEST_CODE = 1;
         startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
 
         createButtonListeners();
@@ -78,7 +74,7 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
             return;
         }
         //Location of current photo
-        mCurrentPhotoPath = data.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String mCurrentPhotoPath = data.getStringExtra(MainActivity.EXTRA_MESSAGE);
 
         //Progress dialog, while cropping face
         ProgressDialog progress = new ProgressDialog(mContext);
@@ -174,7 +170,6 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
         FileOutputStream out = null;
         try {
             normalizeImageSize();
-            String name = test.getName();
             out = new FileOutputStream(test.getAbsolutePath());
             mFaceBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
 

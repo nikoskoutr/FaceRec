@@ -11,8 +11,8 @@ public enum PagerHelperEnum {
     TIMEPREDICT(R.string.timePredictPageTitle, R.layout.time_predict_graph),
     SUCCESSNUMBER(R.string.successNumberPageTitle, R.layout.success_number_graph);
 
-    private int mTitleResId;
-    private int mLayoutResId;
+    private final int mTitleResId;
+    private final int mLayoutResId;
 
     PagerHelperEnum(int titleResId, int layoutResId){
         mTitleResId = titleResId;

@@ -3,11 +3,11 @@ package com.apps.ktr.facerec;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,7 +26,7 @@ public class TrainAlgorithmsActivity extends AppCompatActivity {
     private long eigenFacesTime;
     private long fisherFacesTime;
     private long lbphTime;
-    final Context mContext = this;
+    final private Context mContext = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

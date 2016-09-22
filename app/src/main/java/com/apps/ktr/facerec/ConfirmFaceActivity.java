@@ -168,6 +168,7 @@ public class ConfirmFaceActivity extends AppCompatActivity implements DetectFace
                 } else {
                     throw new Exception();
                 }
+                c.close();
             }
         }
 

@@ -16,13 +16,16 @@ import java.lang.ref.WeakReference;
 
 /**
  * Created by nikos on 4/14/16.
+ * Project name: FaceRec.
+ * File name: ${FILE_NAME}.
+ * Developed with: Android Studio.
  */
 public class DetectFaceHelperTask extends AsyncTask<String, Void, Bitmap>{
 
     private static final String TAG = "FACEREC";
     private final WeakReference<ImageView> imageViewReference;
     private final WeakReference<ProgressDialog> pd;
-    public AsyncResponse delegate = null;
+    private AsyncResponse delegate = null;
 
     public interface AsyncResponse {
         void processFinish(Bitmap output);

@@ -1,14 +1,11 @@
 package com.apps.ktr.facerec;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -20,7 +17,6 @@ public class SelectUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_user);
-        Resources r = getResources();
         ListView listView = (ListView) findViewById(R.id.listView);
         String[] arrayColumns = new String[]{FaceRecContract.UserEntry._ID, FaceRecContract.UserEntry.COLUMN_NAME_USERNAME, FaceRecContract.UserEntry.COLUMN_NAME_USERSURNAME};
         int[] arrayIds = new int[]{R.id.listID, R.id.listName, R.id.listSurname};
@@ -52,5 +48,6 @@ public class SelectUserActivity extends AppCompatActivity {
                 }
             });
         }
+        c.close();
     }
 }

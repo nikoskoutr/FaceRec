@@ -27,12 +27,11 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CameraActivity extends AppCompatActivity {
     private Camera mCamera;
-    private CameraPreview mPreview;
     private static final String TAG = "FACEREC";
-    private Overlay mFaceView;
     private String mCurrentPhotoPath;
 
     @Override
@@ -45,10 +44,10 @@ public class CameraActivity extends AppCompatActivity {
             mCamera = openFrontFacingCamera();
         }
 
-        mFaceView = new Overlay(this, mCamera);
+        Overlay mFaceView = new Overlay(this);
 
         // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, mCamera, mFaceView);
+        CameraPreview mPreview = new CameraPreview(this, mCamera, mFaceView);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         if (preview != null) {
             preview.addView(mPreview);
@@ -100,9 +99,9 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    public File createImageFIle() throws IOException {
+    private File createImageFIle() throws IOException {
         // Timestamp to identify file.
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.UK).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = this.getCacheDir();
         File image = File.createTempFile(
@@ -129,7 +128,7 @@ public class CameraActivity extends AppCompatActivity {
 
         // Function to open front facing camera.
         Camera c = null;
-        int cameraCount = 0;
+        int cameraCount;
         // CameraInfo object to get type of camera.
         Camera.CameraInfo cI = new Camera.CameraInfo();
         // Get number of available cameras.
@@ -153,18 +152,16 @@ public class CameraActivity extends AppCompatActivity {
 
 
 class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    private SurfaceHolder mHolder;
+    private final SurfaceHolder mHolder;
     private Camera mCamera;
     private Camera.Size mPreviewSize;
     private static final String TAG = "FACEREC";
     private static List<Camera.Size> mSupportedPreviewSizes;
-    private Context mContext;
-    private Overlay mFaceView;
+    private final Overlay mFaceView;
 
     public CameraPreview(Context c, Camera ca, Overlay o) {
         super(c);
         // Constructor that sets member variables for context, camera and supported preview sizes.
-        mContext = c;
         mCamera = ca;
         mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
         mFaceView = o;
@@ -285,11 +282,9 @@ class Overlay extends View {
     private Paint mPaint;
     private Paint mTextPaint;
     private Camera.Face[] mFaces;
-    private Camera mCamera;
 
-    public Overlay(Context c, Camera cam) {
+    public Overlay(Context c) {
         super(c);
-        mCamera = cam;
         initialize();
     }
 

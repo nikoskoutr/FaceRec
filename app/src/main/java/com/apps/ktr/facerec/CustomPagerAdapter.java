@@ -4,18 +4,15 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.hardware.camera2.params.Face;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-
-import java.util.ArrayList;
 
 /**
  * Created by nikos on 7/4/16.
@@ -24,7 +21,7 @@ import java.util.ArrayList;
  * Developed with: Android Studio.
  */
 public class CustomPagerAdapter extends PagerAdapter {
-    private Context mContext;
+    private final Context mContext;
 
     public CustomPagerAdapter(Context context){
         mContext = context;
@@ -65,7 +62,6 @@ public class CustomPagerAdapter extends PagerAdapter {
         PagerHelperEnum pagerEnum = PagerHelperEnum.values()[position];
         String[] projection = null;
         String sortOder = null;
-        boolean minMax = false;
         int graphResId = 0;
         String graphTitle = null;
         switch (pagerEnum) {
@@ -95,7 +91,6 @@ public class CustomPagerAdapter extends PagerAdapter {
                         FaceRecContract.StatisticsEntry.COLUMN_NAME_SUCCESS,
                         FaceRecContract.StatisticsEntry.COLUMN_NAME_TOTAL_HITS};
                 sortOder = FaceRecContract.StatisticsEntry.COLUMN_NAME_NUMBERIMAGESID + " ASC";
-                //minMax = true;
                 graphTitle = "User Images Number - Success %";
                 break;
         }
@@ -112,15 +107,8 @@ public class CustomPagerAdapter extends PagerAdapter {
         if (c.moveToFirst()) {
             GraphView graph = (GraphView) layout.findViewById(graphResId);
             graph.setTitle(graphTitle);
-            if (minMax) {
-                graph.getViewport().setYAxisBoundsManual(true);
-                graph.getViewport().setMinY(0);
-                graph.getViewport().setMaxY(2);
-            }
-            int i = 0;
             while (!c.isAfterLast()) {
                 c.moveToNext();
-                i++;
             }
             LineGraphSeries<DataPoint> dataEigen = new LineGraphSeries<>();
             LineGraphSeries<DataPoint> dataFisher = new LineGraphSeries<>();
@@ -172,16 +160,22 @@ public class CustomPagerAdapter extends PagerAdapter {
                 graph.addSeries(dataEigen);
                 dataEigen.setTitle("Eigenfaces");
                 dataEigen.setColor(Color.RED);
+                graph.getLegendRenderer().setVisible(true);
+                graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
             }
             if(!dataFisher.isEmpty()){
                 graph.addSeries(dataFisher);
                 dataFisher.setTitle("Fisherfaces");
                 dataFisher.setColor(Color.GREEN);
+                graph.getLegendRenderer().setVisible(true);
+                graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
             }
             if(!dataLBPH.isEmpty()){
                 graph.addSeries(dataLBPH);
                 dataLBPH.setTitle("LBPH");
                 dataLBPH.setColor(Color.BLUE);
+                graph.getLegendRenderer().setVisible(true);
+                graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
             }
         }
         c.close();

@@ -57,4 +57,6 @@
     <string name="successPercentagePageTitle">Success Rate - Percentage of User Images</string>
     <string name="successNumberPageTitle">Success Rate - Number of User Images</string>
     <string name="timePredictPageTitle">Predict Time Graph</string>
+    <string name="trainTime">Train Time:</string>
+    <string name="predictTime">Predict Time:</string>
 </resources>

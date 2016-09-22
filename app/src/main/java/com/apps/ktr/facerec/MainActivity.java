@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = "FACEREC";
     private String mCurrentPhotoPath;
-    private static Context mContext;
+    private Context mContext;
     private Handler handler;
     private ProgressDialog dialog;
 
@@ -88,16 +88,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-//        btn = (Button) findViewById(R.id.trainButton);
-//        if(btn != null) {
-//            btn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent trainAlgorithmsIntent = new Intent(mContext, TrainAlgorithmsActivity.class);
-//                    startActivity(trainAlgorithmsIntent);
-//                }
-//            });
-//        }
 
         btn = (Button) findViewById(R.id.dropDbButton);
         if (btn != null) {
