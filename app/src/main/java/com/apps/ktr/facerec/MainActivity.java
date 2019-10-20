@@ -170,9 +170,8 @@ public class MainActivity extends AppCompatActivity {
             if(csv.exists()){
                 csv.delete();
             }
-            try{
+            try(BufferedWriter w = new BufferedWriter(new FileWriter(csv, true));){
                 csv.createNewFile();
-                BufferedWriter w = new BufferedWriter(new FileWriter(csv, true));
                 Set<Map.Entry<String, String[]>> dataSet = csvData.entrySet();
                 for (Map.Entry<String, String[]> entry : dataSet) {
                     String[] images = entry.getValue();
@@ -182,7 +181,6 @@ public class MainActivity extends AppCompatActivity {
                         w.newLine();
                     }
                 }
-                w.close();
             } catch (IOException e) {
                 Log.e(TAG, "Error recreating csv file");
             }

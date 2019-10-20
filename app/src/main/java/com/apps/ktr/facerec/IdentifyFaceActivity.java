@@ -167,25 +167,14 @@ public class IdentifyFaceActivity extends AppCompatActivity implements DetectFac
             }
         }
 
-        FileOutputStream out = null;
-        try {
+        try( FileOutputStream out = new FileOutputStream(test.getAbsolutePath())) {
             normalizeImageSize();
-            out = new FileOutputStream(test.getAbsolutePath());
+
             mFaceBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
 
         } catch (IOException e) {
             Log.e(TAG, "Error compressing bmp");
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "Error closing output stream: " + e.toString());
-            }
         }
-
-
     }
 
     private void normalizeImageSize() {
